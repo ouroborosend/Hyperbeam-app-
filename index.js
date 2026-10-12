@@ -4,28 +4,28 @@ const PORT = process.env.PORT || 8080;
 
 app.use(express.json());
 
-// Ruta principal: Crea la sesión de Hyperbeam y sirve la interfaz
 app.get('/', async (req, res) => {
-  try {
-    const response = await fetch('https://engine.hyperbeam.com/v0/vm', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.HYPERBEAM_API_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({})
-    });
+    console.log("¡Alguien visitó la página principal!");
+    try {
+        const response = await fetch('https://engine.hyperbeam.com/v0/vm', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${process.env.HYPERBEAM_API_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({})
+        });
 
-    const data = await response.json();
+        const data = await response.json();
+        console.log("Respuesta de Hyperbeam:", JSON.stringify(data));
 
-    if (!data.embed_url) {
-      return res.status(500).send("Error de Hyperbeam API: " + JSON.stringify(data));
-    }
+        if (!data.embed_url) {
+            return res.status(500).send("Error de Hyperbeam API: " + JSON.stringify(data));
+        }
 
-    const embedUrl = data.embed_url;
+        const embedUrl = data.embed_url;
 
-    // Devuelve el HTML que carga el reproductor virtual en pantalla completa
-    res.send(`<!DOCTYPE html>
+        res.send(`<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -49,12 +49,13 @@ app.get('/', async (req, res) => {
 </body>
 </html>`);
 
-  } catch (error) {
-    res.status(500).send("Error interno del servidor: " + error.message);
-  }
+    } catch (error) {
+        console.log("Error interno:", error.message);
+        res.status(500).send("Error interno del servidor: " + error.message);
+    }
 });
 
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en puerto ${PORT}`);
+    console.log(`Servidor corriendo en puerto ${PORT}`);
 });
 
